@@ -5,17 +5,18 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"github.com/Jordany_dimbiniaina/chatForFun/interfaces"
 	"github.com/Jordany_dimbiniaina/chatForFun/message"
 )
 
-func handleNewConnection(conn net.Conn, clientStore ClientStore) {
+func handleNewConnection(conn net.Conn, clientStore interfaces.ClientStore) {
 
 	out := make(chan message.Message, 10) // POURQUOI LE CHIFFRE ? BACKPRESURE C'EST QUI ???
 	in := make(chan message.Message, 10)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	go message.OutgoingMessageHandler(ctx, out, conn)
+	go message.OutgoingMessageHandler(ctx, out, conn, clientStore)
 	go message.IncomingMessageHandler(ctx, in, cancel, conn, "||")
 
 	out <- GreetingsMessage(conn, clientStore)
@@ -33,7 +34,7 @@ func handleNewConnection(conn net.Conn, clientStore ClientStore) {
 
 type Server struct {
 	Addr        string
-	ClientStore ClientStore
+	ClientStore interfaces.ClientStore
 }
 
 func (server Server) Start() (net.Listener, error) {
@@ -55,6 +56,7 @@ func (server Server) Serve(ln net.Listener) {
 			continue
 		}
 		server.storeNewUser(conn)
+		fmt.Printf("%v \n", server.ClientStore)
 		go handleNewConnection(conn, server.ClientStore)
 	}
 }
@@ -63,19 +65,20 @@ func (server Server) storeNewUser(conn net.Conn) {
 	server.ClientStore.Store(conn.RemoteAddr().String(), conn)
 }
 
-func NewServer(addr string, clientStore ClientStore) *Server {
+func NewServer(addr string, clientStore interfaces.ClientStore) *Server {
 	return &Server{
 		Addr:        addr,
 		ClientStore: clientStore,
 	}
 }
 
-func GreetingsMessage(conn net.Conn, clientStore ClientStore) message.Message {
-	
+func GreetingsMessage(conn net.Conn, clientStore interfaces.ClientStore) message.Message {
 	return message.Message{
 		Sender:  "SERVER",
 		Host:    conn.RemoteAddr().String(),
 		Content: fmt.Sprintf("WELCOME : %s \n", conn.RemoteAddr().String()),
 	}
 }
+
+
 

@@ -4,17 +4,25 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"github.com/Jordany_dimbiniaina/chatForFun/interfaces"
+	"github.com/Jordany_dimbiniaina/chatForFun/utils"
 )
 
-func OutgoingMessageHandler(ctx context.Context, out chan Message, conn net.Conn) {
 
-	
+func OutgoingMessageHandler(ctx context.Context, out chan Message, sender net.Conn, clientStore interfaces.ClientStore)  {
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		case message := <-out:
-			fmt.Fprintf(conn, "%s -> %s : %s \n", message.Sender, message.Host, message.Content)
+			hostConn := utils.GetHostConn(message.Host, clientStore)			
+			if hostConn == nil {
+				message.Sender = "SERVER"
+				message.Content = "UNREACHABLE HOST \n"
+				hostConn = sender
+			} 
+			fmt.Fprintf(hostConn, "%s -> %s : %s \n", message.Sender, message.Host, message.Content)
 		}
 	}
 }
+

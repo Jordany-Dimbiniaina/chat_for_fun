@@ -1,4 +1,5 @@
-package server
+package interfaces
+
 
 import (
 	"io"

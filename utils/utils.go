@@ -6,8 +6,17 @@ import (
 	"net"
 	"os"
 	"strings"
+	"github.com/Jordany_dimbiniaina/chatForFun/interfaces"
 )
 
+
+func GetHostConn(addr string, clientStore interfaces.ClientStore)  interfaces.ReadWriteCloser {
+	hostConn, connected := clientStore.Load(addr)
+	if !connected {
+		return nil
+	}
+	return hostConn
+}
 
 
 func AvalaibleUsers(clients map[string]net.Conn) string {
