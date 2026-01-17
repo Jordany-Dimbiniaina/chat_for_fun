@@ -7,6 +7,8 @@ import (
 )
 
 func OutgoingMessageHandler(ctx context.Context, out chan Message, conn net.Conn) {
+
+	
 	for {
 		select {
 		case <-ctx.Done():
