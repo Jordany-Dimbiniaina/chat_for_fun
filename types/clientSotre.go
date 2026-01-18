@@ -1,8 +1,9 @@
 package types
 
 import (
+	"fmt"
+	"strings"
 	"sync"
-
 	"github.com/Jordany_dimbiniaina/chatForFun/interfaces"
 )
 
@@ -30,6 +31,16 @@ func (store *TCPClientStore) Delete(addr string) {
 	defer store.Unlock()
 	delete(store.clients, addr)
 }
+
+func (store *TCPClientStore) List() string {
+	var builder strings.Builder
+	store.Lock()
+	for key  := range store.clients {
+		builder.WriteString(fmt.Sprintf("\t %s \n", key))
+	}
+	return builder.String()
+}
+
 
 func NewTCPClientStore() *TCPClientStore {
 	return &TCPClientStore{

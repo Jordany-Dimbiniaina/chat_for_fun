@@ -20,6 +20,12 @@ func handleNewConnection(conn net.Conn, clientStore interfaces.ClientStore) {
 	go message.IncomingMessageHandler(ctx, in, cancel, conn, "||")
 
 	out <- GreetingsMessage(conn, clientStore)
+	// out <- message.Message{
+	// 	Sender: "SERVER",
+	// 	SystemMessage: true,
+	// 	Content: fmt.Sprintf("CONNECTED USERS : \n  %s ", clientStore.List()),
+	// 	Host : conn.RemoteAddr().String(),
+	// }
 
 	for {
 		select {
@@ -38,12 +44,12 @@ type Server struct {
 }
 
 func (server Server) Start() (net.Listener, error) {
-	ln, err := net.Listen("tcp", server.Addr)
+	ln, err := net.Listen("tcp", "")
 	if err != nil {
 		return nil, err
 	}
 	log.Printf("Start server")
-	fmt.Printf("TCP server running on : %s \n", server.Addr)
+	fmt.Printf("TCP server running on : %s \n", ln.Addr().String())
 	return ln, nil
 }
 
@@ -75,6 +81,7 @@ func NewServer(addr string, clientStore interfaces.ClientStore) *Server {
 func GreetingsMessage(conn net.Conn, clientStore interfaces.ClientStore) message.Message {
 	return message.Message{
 		Sender:  "SERVER",
+		SystemMessage: true,
 		Host:    conn.RemoteAddr().String(),
 		Content: fmt.Sprintf("WELCOME : %s \n", conn.RemoteAddr().String()),
 	}

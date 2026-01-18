@@ -18,10 +18,15 @@ func OutgoingMessageHandler(ctx context.Context, out chan Message, sender net.Co
 			hostConn := utils.GetHostConn(message.Host, clientStore)			
 			if hostConn == nil {
 				message.Sender = "SERVER"
+				message.SystemMessage = true
 				message.Content = "UNREACHABLE HOST \n"
 				hostConn = sender
 			} 
-			fmt.Fprintf(hostConn, "%s -> %s : %s \n", message.Sender, message.Host, message.Content)
+			if message.SystemMessage {
+				fmt.Fprintf(hostConn, " %s \n",message.Content)
+			} else {
+				fmt.Fprintf(hostConn, "%s : %s \n", message.Sender, message.Content)
+			}
 		}
 	}
 }

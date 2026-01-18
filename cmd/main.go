@@ -7,7 +7,7 @@ import (
 	"github.com/Jordany_dimbiniaina/chatForFun/utils"
 )
 
-const SERVER_ADDR = ":2610"
+const SERVER_ADDR = "0.0.0.0:2610"
 
 func main ()  {
 	utils.ConfigureLog()

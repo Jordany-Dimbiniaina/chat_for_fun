@@ -15,4 +15,5 @@ type ClientStore interface {
 	Store(addr string, conn ReadWriteCloser)
 	Load(addr string) (ReadWriteCloser, bool)
 	Delete(addr string)
+	List() string
 }
