@@ -29,13 +29,13 @@ func AvalaibleUsers(clients map[string]net.Conn) string {
 }
 
 
-func ConfigureLog()  {
+func ConfigureLog()  *os.File{
 	logFile, err := os.OpenFile("log/server.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalf("Failed to open log file: %v \n", err)
 	}
-	defer logFile.Close()
 	log.SetOutput(logFile)
+	return logFile
 }
 
 
