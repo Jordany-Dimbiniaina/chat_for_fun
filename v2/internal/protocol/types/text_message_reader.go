@@ -1,15 +1,17 @@
-package protocol
+package types
 
 import (
 	"bufio"
 	"io"
 	"strings"
+
+	protocol "github.com/Jordany-Dimbiniaina/chat_for_fun/v2/internal/protocol/interfaces"
 )
 
 
 type TextMessageReader struct {}
 
-func (reader *TextMessageReader) ReadMessage(r io.Reader, delimiter string) (Message, error) {
+func (reader *TextMessageReader) ReadMessage(r io.Reader, delimiter string) (protocol.Message, error) {
 	scanner := bufio.NewScanner(r)
 	firstLine := true
 	host := ""
@@ -30,7 +32,7 @@ func (reader *TextMessageReader) ReadMessage(r io.Reader, delimiter string) (Mes
 	}
 	
 	return &IncomingTextMessage{
-		host:    host,
-		content:contentBuilder.String(),
+		Host:    host,
+		Content:contentBuilder.String(),
 	}, scanner.Err()
 }
