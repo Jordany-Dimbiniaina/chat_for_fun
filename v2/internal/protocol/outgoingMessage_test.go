@@ -11,8 +11,6 @@ import (
 
 func Test(t *testing.T) {
 	var writer bytes.Buffer 
-
-
 	message := types.TextMessage {
 		Host : "192.168.1.1:2610",
 		Sender : "192.168.1.1:2160",
