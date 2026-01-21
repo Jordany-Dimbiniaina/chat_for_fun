@@ -12,3 +12,6 @@ type Message interface {
 type MessageReader interface {
 	ReadMessage(io.Reader) (Message, error)
 }
+
+
+
