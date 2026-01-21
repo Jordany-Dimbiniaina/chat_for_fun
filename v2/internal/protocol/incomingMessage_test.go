@@ -11,10 +11,10 @@ func TestTextMessageReader(t *testing.T) {
 
 	stream := "192.168.1.1:26100\nHello My friend!\nHow are you?\n||"
 	reader := strings.NewReader(stream)
-	textMessageReader := &types.TextMessageReader{}
 	delimiter := "||"
 
-	message, err := textMessageReader.ReadMessage(reader, delimiter)
+	textMessageReader := types.NewTextMessageReader(reader, delimiter)
+	message, err := textMessageReader.ReadMessage()
 	
 	sameHost := message.GetHost() == "192.168.1.1:26100"
 	sameContent := message.GetContent() == "Hello My friend!\nHow are you?\n"

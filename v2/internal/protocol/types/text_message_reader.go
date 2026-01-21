@@ -4,14 +4,16 @@ import (
 	"bufio"
 	"io"
 	"strings"
-
-	protocol "github.com/Jordany-Dimbiniaina/chat_for_fun/v2/internal/protocol/interfaces"
+	"github.com/Jordany-Dimbiniaina/chat_for_fun/v2/internal/protocol/interfaces"
 )
 
-type TextMessageReader struct{}
+type TextMessageReader struct{
+	reader io.Reader
+	delimiter string
+}
 
-func (reader *TextMessageReader) ReadMessage(r io.Reader, delimiter string) (protocol.Message, error) {
-	scanner := bufio.NewScanner(r)
+func (reader *TextMessageReader) ReadMessage() (interfaces.Message, error) {
+	scanner := bufio.NewScanner(reader.reader)
 	firstLine := true
 	host := ""
 	contentBuilder := strings.Builder{}
@@ -23,15 +25,23 @@ func (reader *TextMessageReader) ReadMessage(r io.Reader, delimiter string) (pro
 			continue
 		}
 		line := scanner.Text()
-		if line == delimiter {
+		if line == reader.delimiter {
 			break
 		}
 		contentBuilder.WriteString(line)
 		contentBuilder.WriteString("\n")
 	}
 
-	return &IncomingTextMessage{
+	return &TextMessage{
 		Host:    host,
 		Content: contentBuilder.String(),
 	}, scanner.Err()
+}
+
+
+func NewTextMessageReader(reader io.Reader, delimiter string) interfaces.MessageReader {
+	return &TextMessageReader{
+		reader: reader,
+		delimiter : delimiter,
+	}
 }

@@ -1,16 +1,22 @@
 package interfaces
 
 import (
-	"io"
+	"time"
 )
 
 type Message interface {
 	GetHost() string
 	GetContent() string
+	GetTime() time.Time 
+	GetSender() string
 }
 
 type MessageReader interface {
-	ReadMessage(io.Reader) (Message, error)
+	ReadMessage() (Message, error)
+}
+
+type MessageWriter interface {
+	WriteMessage(Message) (int, error)
 }
 
 
